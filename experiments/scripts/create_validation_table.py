@@ -5,8 +5,7 @@ from transformers import pipeline
 
 from experiments.benchmark import DifferenceRecognitionResult
 from experiments.utils import load_summary_benchmarks
-from recognizers import DiffAlign, DiffDel
-
+from recognizers import DiffAlign, DiffDel, DiffMask
 
 benchmarks = load_summary_benchmarks("validation")
 device = 0
@@ -66,6 +65,15 @@ recognizers.append(
         pipeline=pipeline(
             model="sentence-transformers/paraphrase-xlm-r-multilingual-v1",
             task="feature-extraction",
+        ),
+        batch_size=4,
+    ),
+)
+recognizers.append(
+    DiffMask(
+        pipeline=pipeline(
+            model="xlm-roberta-base",
+            task="fill-mask",
         ),
         batch_size=4,
     ),

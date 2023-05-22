@@ -1,3 +1,6 @@
+# Recognizing Semantic Differences (RSD)
+![Master](https://github.com/ZurichNLP/recognizing-semantic-differences/workflows/unittest/badge.svg?branch=master&event=push)
+
 Code for the paper: "Towards Unsupervised Recognition of Semantic Differences in Related Documents".
 
 ## Installation
@@ -35,6 +38,6 @@ result = diff_align.predict(a, b)
 * `python -m experiments.scripts.create_validation_table_del_ablations`
 ### Figure 2: Additional results
 * `python -m experiments.scripts.create_negative_ratio_figure`
-* `python -m experiments.scripts.create_languages_figure`
 * `python -m experiments.scripts.create_document_length_figure`
 * `python -m experiments.scripts.create_permutation_figure`
+* `python -m experiments.scripts.create_languages_figure`
