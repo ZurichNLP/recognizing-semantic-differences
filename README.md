@@ -1,7 +1,7 @@
 # Recognizing Semantic Differences (RSD)
 ![Master](https://github.com/ZurichNLP/recognizing-semantic-differences/workflows/unittest/badge.svg?branch=master&event=push)
 
-Code for the paper: "Towards Unsupervised Recognition of Semantic Differences in Related Documents".
+Code for the paper: ["Towards Unsupervised Recognition of Semantic Differences in Related Documents"](https://doi.org/10.48550/arXiv.2305.13303).
 
 ## Installation
 
@@ -41,3 +41,15 @@ result = diff_align.predict(a, b)
 * `python -m experiments.scripts.create_document_length_figure`
 * `python -m experiments.scripts.create_permutation_figure`
 * `python -m experiments.scripts.create_languages_figure`
+
+## Citation
+```bibtex
+@article{vamvas-sennrich-2023-rsd,
+      title={Towards Unsupervised Recognition of Semantic Differences in Related Documents},
+      author={Jannis Vamvas and Rico Sennrich},
+      year={2023},
+      eprint={2305.13303},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+```
