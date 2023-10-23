@@ -1,7 +1,7 @@
 # Recognizing Semantic Differences (RSD)
 ![Master](https://github.com/ZurichNLP/recognizing-semantic-differences/workflows/unittest/badge.svg?branch=master&event=push)
 
-Code for the paper: ["Towards Unsupervised Recognition of Semantic Differences in Related Documents"](https://doi.org/10.48550/arXiv.2305.13303).
+Code for the EMNLP 2023 paper ["Towards Unsupervised Recognition of Token-level Semantic Differences in Related Documents"](https://doi.org/10.48550/arXiv.2305.13303).
 
 ## Installation
 
@@ -44,12 +44,13 @@ result = diff_align.predict(a, b)
 
 ## Citation
 ```bibtex
-@article{vamvas-sennrich-2023-rsd,
-      title={Towards Unsupervised Recognition of Semantic Differences in Related Documents},
+@inproceedings{vamvas-sennrich-2023-rsd,
+      title={Towards Unsupervised Recognition of Token-level Semantic Differences in Related Documents},
       author={Jannis Vamvas and Rico Sennrich},
-      year={2023},
-      eprint={2305.13303},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
+      month = dec,
+      year = "2023",
+      booktitle = "Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing",
+      address = "Singapore",
+      publisher = "Association for Computational Linguistics",
 }
 ```
