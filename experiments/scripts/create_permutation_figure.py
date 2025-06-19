@@ -1,38 +1,44 @@
-from collections import OrderedDict
-
 import numpy as np
 from transformers import pipeline
 
-from experiments.benchmark import DifferenceRecognitionResult
 from experiments.utils import load_permutation_benchmarks
-from recognizers import DiffAlign
-
+from recognizers import DiffAlign, DiffDel, DiffMask
 
 benchmarks = load_permutation_benchmarks("validation")
 device = 0
-num_seeds = 10
 
 seeds = [22417, 26186, 28852, 39168, 43002, 73246, 75213, 75370, 92253, 96301]
+num_seeds = len(seeds)
 
-recognizers = []
-for seed in seeds[:num_seeds]:
-    recognizers.append(DiffAlign(
+diffalign_recognizers = [
+    DiffAlign(
         pipeline=pipeline(
             model=f"../SimCSE/models/simcse-xlm-roberta-base-mean-pooling-seed{seed}",
             task="feature-extraction",
         ),
-        batch_size=4,
-    ))
-recognizers.append(DiffAlign(
-    pipeline=pipeline(
-        model="sentence-transformers/paraphrase-xlm-r-multilingual-v1",
-        task="feature-extraction",
-    ),
-    batch_size=4,
-))
+    )
+    for seed in seeds[:num_seeds]
+]
+diffdel_recognizers = [
+    DiffDel(
+        pipeline=pipeline(
+            model=f"../SimCSE/models/simcse-xlm-roberta-base-mean-pooling-seed{seed}",
+            task="feature-extraction",
+        ),
+    )
+    for seed in seeds[:num_seeds]
+]
+diffmask_recognizers = [
+    DiffMask(
+        pipeline=pipeline(
+            model="xlm-roberta-base",
+            task="fill-mask",
+        ),
+    )
+]
 
-results = OrderedDict()
-for i, recognizer in enumerate(recognizers):
+diffalign_results = np.zeros((len(diffalign_recognizers), len(benchmarks)))
+for i, recognizer in enumerate(diffalign_recognizers):
     print(recognizer)
     recognizer.pipeline.device = device
     recognizer.device = device
@@ -43,56 +49,97 @@ for i, recognizer in enumerate(recognizers):
         result = benchmark.evaluate(recognizer)
         print(result)
         recognizer_results.append(result)
-    results[str(recognizer)] = recognizer_results
-    recognizers[i] = None
+    diffalign_results[i, :] = [result.spearman for result in recognizer_results]
+    diffalign_recognizers[i] = None
     del recognizer
+diffalign_results = np.mean(diffalign_results, axis=0)
+assert len(diffalign_results) == len(benchmarks)
 
-simcse_spearmans = [[] for _ in range(len(benchmarks))]
-for recognizer_name, recognizer_results in list(results.items()):
-    if "simcse" in recognizer_name.lower():
-        for i, result in enumerate(recognizer_results):
-            simcse_spearmans[i].append(result.spearman)
-        del results[recognizer_name]
-results["\\xlmr{} + SimCSE (unsupervised)"] = [DifferenceRecognitionResult(spearman=np.mean(spearmans)) for spearmans in simcse_spearmans]
+diffdel_results = np.zeros((len(diffdel_recognizers), len(benchmarks)))
+for i, recognizer in enumerate(diffdel_recognizers):
+    print(recognizer)
+    recognizer.pipeline.device = device
+    recognizer.device = device
+    recognizer.pipeline.model = recognizer.pipeline.model.to(device)
+    recognizer_results = []
+    for benchmark in benchmarks:
+        print(benchmark)
+        result = benchmark.evaluate(recognizer)
+        print(result)
+        recognizer_results.append(result)
+    diffdel_results[i, :] = [result.spearman for result in recognizer_results]
+    diffdel_recognizers[i] = None
+    del recognizer
+diffdel_results = np.mean(diffdel_results, axis=0)
+assert len(diffdel_results) == len(benchmarks)
+
+diffmask_results = np.zeros((len(diffmask_recognizers), len(benchmarks)))
+for i, recognizer in enumerate(diffmask_recognizers):
+    print(recognizer)
+    recognizer.pipeline.device = device
+    recognizer.device = device
+    recognizer.pipeline.model = recognizer.pipeline.model.to(device)
+    recognizer_results = []
+    for benchmark in benchmarks:
+        print(benchmark)
+        result = benchmark.evaluate(recognizer)
+        print(result)
+        recognizer_results.append(result)
+    diffmask_results[i, :] = [result.spearman for result in recognizer_results]
+    diffmask_recognizers[i] = None
+    del recognizer
+diffmask_results = np.mean(diffmask_results, axis=0)
+assert len(diffmask_results) == len(benchmarks)
 
 template = """\
 \\begin{tikzpicture}
 \\begin{axis}[
     xlabel={Inversion number},
     ylabel={Spearman correlation},
-    xmin=1, xmax=10,
+    xmin=0, xmax=10,
     ymin=0, ymax=100,
-    xtick={1,2,3,4,5,6,7,8,9,10},
+    xtick={0,1,2,3,4,5,6,7,8,9,10},
     ytick={0,20,40,60,80,100},
-    legend pos=south west,
+    legend pos=north east,
     legend cell align={left},
     ymajorgrids=true,
     grid style=dashed,
 ]
 
 \\addplot[
-    color=blue,
+        color=blue,
+        style=solid,
     ]
     coordinates {
     (0,0.00)(1,0.00)
     };
-    \\addlegendentry{\\xlmr{} + SimCSE (unsupervised)}
+    \\addlegendentry{\\diffalign{}}
 \\addplot[
-    color=gray,
+        color=red,
+        style=dashed,
     ]
     coordinates {
     (0,0.00)(1,0.00)
     };
-    \\addlegendentry{\\xlmr{} trained on paraphrases}
+    \\addlegendentry{\\diffdel{}}
+\\addplot[
+        color=black,
+        style=dotted,
+        line width=1.5pt,
+    ]
+    coordinates {
+    (0,0.00)(1,0.00)
+    };
+    \\addlegendentry{\\diffmask{}}
 \\end{axis}
 \\end{tikzpicture}
 """
 
 inversion_numbers = list(range(0, 11))
-for recognizer_results in reversed(list(results.values())):
+for recognizer_results in [diffalign_results, diffdel_results, diffmask_results]:
     assert len(recognizer_results) == len(inversion_numbers)
     line: str = ""
     for inversion_number, result in zip(inversion_numbers, recognizer_results):
-        line += f"({inversion_number},{result.spearman * 100:.1f})"
+        line += f"({inversion_number},{result * 100:.1f})"
     template = template.replace("(0,0.00)(1,0.00)", line, 1)
 print(template)

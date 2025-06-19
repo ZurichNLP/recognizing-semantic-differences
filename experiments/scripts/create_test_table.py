@@ -22,13 +22,6 @@ for seed in seeds[:num_seeds]:
         ),
         batch_size=4,
     ))
-recognizers.append(DiffAlign(
-    pipeline=pipeline(
-        model="sentence-transformers/paraphrase-xlm-r-multilingual-v1",
-        task="feature-extraction",
-    ),
-    batch_size=4,
-))
 
 results = OrderedDict()
 for i, recognizer in enumerate(recognizers):
@@ -62,12 +55,8 @@ template = """\
 Approach                                                        & iSTS & +\\,Negatives & +\\,Documents & +\\,Permuted & +\\,Cross-lingual \\\\ \\midrule
 \\diffalign{}                                                    &      &               &               &           &              \\\\
 -- \\xlmr{} + SimCSE                                             & 1.00 & 1.00          & 1.00          & 1.00      & 1.00         \\\\
--- \\textit{\\xlmr{} trained on paraphrases}  & \\textit{0.00} & \\textit{0.00} & \\textit{0.00} & \\textit{0.00} & \\textit{0.00} \\\\  \\bottomrule
 """
 
-for recognizer_name, recognizer_results in results.items():
-    for result in recognizer_results:
-        template = template.replace("0.00", f"{100*result.spearman:.1f}", 1)
 for spearmans in simcse_spearmans:
     mean = sum(spearmans) / len(spearmans)
     template = template.replace("1.00", f"{100*mean:.1f}", 1)

@@ -41,16 +41,6 @@ for seed in seeds[:num_seeds]:
         batch_size=4,
     ))
 
-recognizers.append(
-    DiffAlign(
-        pipeline=pipeline(
-            model="sentence-transformers/paraphrase-xlm-r-multilingual-v1",
-            task="feature-extraction",
-        ),
-        batch_size=4,
-    )
-)
-
 for seed in seeds[:num_seeds]:
     recognizers.append(DiffDel(
         pipeline=pipeline(
@@ -60,15 +50,6 @@ for seed in seeds[:num_seeds]:
         batch_size=4,
     ))
 
-recognizers.append(
-    DiffDel(
-        pipeline=pipeline(
-            model="sentence-transformers/paraphrase-xlm-r-multilingual-v1",
-            task="feature-extraction",
-        ),
-        batch_size=4,
-    ),
-)
 recognizers.append(
     DiffMask(
         pipeline=pipeline(
@@ -119,10 +100,8 @@ Approach                                                        & iSTS & +\\,Neg
 -- \\xlmr{} (last layer)                                         & 0.00 & 0.00          & 0.00          & 0.00      & 0.00         \\\\
 -- \\xlmr{} (8th layer)                                          & 0.00 & 0.00          & 0.00          & 0.00      & 0.00         \\\\
 -- \\xlmr{} + SimCSE                                             & 1.00 & 1.00          & 1.00          & 1.00      & 1.00         \\\\
--- \\textit{\\xlmr{} trained on paraphrases}  & \\textit{0.00} & \\textit{0.00} & \\textit{0.00} & \\textit{0.00} & \\textit{0.00}         \\\\  \\midrule
 \\diffdel{}                                                    &      &               &               &           &              \\\\
 -- \\xlmr{} + SimCSE                                             & 1.00 & 1.00          & 1.00          & 1.00      & 1.00         \\\\
--- \\textit{\\xlmr{} trained on paraphrases}  & \\textit{0.00} & \\textit{0.00} & \\textit{0.00} & \\textit{0.00} & \\textit{0.00}         \\\\  \\midrule
 \\diffmask{}                                                      &      &               &               &           &              \\\\
 -- \\xlmr{}                                                      & 0.00 & 0.00          & 0.00          & 0.00      & 0.00         \\\\ \\bottomrule
 """
