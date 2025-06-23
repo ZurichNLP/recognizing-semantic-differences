@@ -5,6 +5,7 @@ Code for the EMNLP 2023 paper ["Towards Unsupervised Recognition of Token-level 
 
 ## Bugfix 2025-06-23
 The original version of the code unintentionally selected the non-paraphrases of PAWSX as negative examples, instead of the paraphrases. The bug was fixed in commit https://github.com/ZurichNLP/recognizing-semantic-differences/commit/e94de3cd823389ddb3dd860c85eb169e4a74c843.
+Thanks to [@mywitt](https://github.com/miwytt) for pointing out the error.
 
 ## Installation
 
