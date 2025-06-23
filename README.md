@@ -1,7 +1,10 @@
 # Recognizing Semantic Differences (RSD)
-![Master](https://github.com/ZurichNLP/recognizing-semantic-differences/workflows/unittest/badge.svg?branch=master&event=push)
+![Master](https://github.com/ZurichNLP/recognizing-semantic-differences/workflows/unittest/badge.svg)
 
 Code for the EMNLP 2023 paper ["Towards Unsupervised Recognition of Token-level Semantic Differences in Related Documents"](https://doi.org/10.48550/arXiv.2305.13303).
+
+## Bugfix 2025-06-23
+The original version of the code unintentionally selected the non-paraphrases of PAWSX as negative examples, instead of the paraphrases. The bug was fixed in commit https://github.com/ZurichNLP/recognizing-semantic-differences/commit/e94de3cd823389ddb3dd860c85eb169e4a74c843.
 
 ## Installation
 
