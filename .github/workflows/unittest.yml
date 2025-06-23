@@ -30,5 +30,9 @@ jobs:
           pip install flake8
           # stop the build if there are Python syntax errors or undefined names
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude experiments
+      - name: Login to Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: echo "$HF_TOKEN" | huggingface-cli login --token
       - name: Test
         run: python -m unittest discover -s tests
