@@ -23,7 +23,7 @@ class PAWSXDataset(DifferenceDataset):
         self.split = split
         dataset = load_dataset("paws-x", language, split=self.split)
         # Only use sentence pairs that are paraphrases
-        self.dataset = dataset.filter(lambda example: example["label"] == 0)
+        self.dataset = dataset.filter(lambda example: example["label"] == 1)
 
     def get_samples(self) -> List[PAWSXSample]:
         samples = []
