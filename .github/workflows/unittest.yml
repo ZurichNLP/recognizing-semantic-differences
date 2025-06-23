@@ -32,7 +32,8 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude experiments
       - name: Login to Hugging Face
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: echo "$HF_TOKEN" | huggingface-cli login --token
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}   # set this secret in your repo/-org settings
+        run: |
+          huggingface-cli login --token "$HF_TOKEN"
       - name: Test
         run: python -m unittest discover -s tests
